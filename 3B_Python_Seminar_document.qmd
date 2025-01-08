@@ -1,0 +1,336 @@
+---
+title: "3B Python Seminar"
+format: 
+  html:
+    toc: true
+---
+
+```{r initialise_reticulate, echo = FALSE}
+
+library(reticulate)
+use_condaenv("biopandas", required = TRUE)
+
+```
+
+## When to use python
+
+I find myself using python in 4 cases:
+
+-   Writing a snakemake workflow.
+-   Manipulating fasta sequences (ex: extract promoters using gene coordinates).
+-   Working with non-standard genetic codes (biopython module)
+-   Doing machine learning.
+
+# Basics
+
+## Types
+
+In python, the simplest objects are:
+
+-   strings (anything not number)
+-   integers (not decimal numbers)
+-   floats (decimal numbers)
+
+As with R, all objects can be assigned to variables
+
+## Example
+
+```{python, echo=TRUE}
+a = "hello"
+b = 1
+c = 3.5
+d = "1"
+
+b + 1
+b + int(d)
+a + str(c)
+type(d)
+```
+
+## Subsetting strings
+
+We can extract subsets of a string using square parentheses.
+
+```{python, echo=TRUE}
+a = "Hello my name is Edoardo Piombo"
+print(a)
+print(a[0])
+print(a[0:4])
+print(a[:4])
+print(a[2:])
+print(a[-2])
+print(a[:-3])
+```
+
+## Python data structures
+
+In python there are several collection data types.
+
+We will see:
+
+-   lists
+
+-   dictionaries
+
+## Lists
+
+Lists collect objects in an ordered and changeable way.
+
+They allow for duplicates, and can contain objects with different types.
+
+```{python, echo=TRUE}
+animals = ["cat", "dog", "seal", "dolphin"]
+animals.append("monkey")
+print(animals)
+
+more_animals = ["dolphin", 5, "snake", 5]
+
+more_animals.remove(5)
+print(more_animals)
+more_animals = more_animals[0:2]
+print(more_animals)
+print(animals + more_animals)
+```
+
+## Dictionaries
+
+They are also ordered and changeable.
+
+They link **keys** with **values**.
+
+There can be no duplicate **key**, but duplicate **values** are accepted.
+
+```{python, echo=TRUE}
+animals = {"dog": "mammal",
+"snake": "reptile",
+"cat" : "mammal"}
+
+print(animals["dog"])
+
+```
+
+## Dictionaries
+
+You can extract their keys and values with the **keys** and **values** methods.
+
+```{python, echo=TRUE}
+animals = {"dog": "mammal",
+"snake": "reptile",
+"cat" : "mammal"}
+
+print(animals.keys())
+print(animals.values())
+
+print(list(animals.keys())[-2])
+
+print(animals[list(animals.keys())[-2]])
+
+```
+
+## Dictionaries can hold anything
+
+```{python, echo=TRUE}
+more_animals = ["snake", "dolphins"]
+animals = {1: ["dog", "cat", 5],
+2: more_animals,
+3: "monkey"}
+
+print(animals[2])
+
+```
+
+## The len command
+
+**len** prints the number of elements in an object.
+
+```{python, echo=TRUE}
+sentence = "My name is Edoardo Piombo"
+animals = ["dog", "cat", "snake", "dolphin"]
+dictio_animals  = {"dog": "mammal", "snake": "reptile", "cat" : "mammal"}
+
+len(sentence)
+len(animals)
+len(dictio_animals)
+
+```
+
+## The import command
+
+Like in R, in python it is possible to import modules to activate additional functions. **Import** is the equivalent of **library** in R
+
+```{python, echo=TRUE}
+import os
+
+print(os.listdir("exercise"))
+
+
+
+```
+
+# For and if
+
+## For statement
+
+The "for" statement allows you to repeat an operation for every element of an object.
+
+It starts with a ":"
+
+It requires your to use **tabs** or **spaces** as indentation to clarify where the loop ends.
+
+```{python, echo=TRUE}
+animals = ["dog", "cat", "snake", "dolphin"]
+
+for animal in animals:
+  print(animal)
+  
+print("No animals left")
+
+```
+
+## You can nest one "for" loop in another one
+
+```{python, echo=TRUE}
+animals = ["dog", "cat", "snake", "dolphin"]
+
+for animal in animals:
+  print(animal)
+  for value in ["1", "no"]:
+    print("There is " + value + " " + animal)
+```
+
+## If statement
+
+"if" allows you to perform an opearation only if a condition is met.
+
+"else" will perform an operation if the condition is not met.
+
+"elif" will perform the operation if another condition is met.
+
+Always maintain indentation.
+
+```{python, echo=TRUE}
+animals = ["dog", "cat", "snake", "dolphin"]
+
+if animals[0] == "dog":
+  print("The first animal is dog")
+elif animals([0] == "cat"):
+  print("The first animal is cat")
+else:
+  print("The first animal is not dog or cat")
+  
+```
+
+## Here are the most common operators
+
+-   "==" is equal
+-   "!=" is not equal
+-   "\>" is strictly greater
+-   "\>=" is greater or equal
+-   "\<" is strictly lower
+-   "\<=" is lower or equal
+
+## You can combine if and for statements
+
+```{python, echo=TRUE}
+animals = ["cat", "dog", "seal", "dolphin", "snake", "crocodile"]
+dictio_animals  = {"dog": "mammal", "snake": "reptile", "cat" : "mammal", "seal": "mammal","dolphin": "mammal", "crocodile": "reptile"}
+
+mammals = []
+
+for animal in animals:
+  if dictio_animals[animal] == "mammal":
+    mammals.append(animal)
+
+print(mammals)
+
+```
+
+## The break statement can stop a "for" loop early
+
+```{python, echo=TRUE}
+animals = ["cat", "dog", "seal", "dolphin", "snake", "crocodile"]
+dictio_animals  = {"dog": "mammal", "snake": "reptile", "cat" : "mammal", "seal": "mammal","dolphin": "mammal", "crocodile": "reptile"}
+
+mammals = []
+
+for animal in animals:
+  if dictio_animals[animal] == "mammal":
+    mammals.append(animal)
+    if animal=="seal":
+      break
+
+print(mammals)
+
+```
+
+## List comprehensions
+
+List comprehension are a method that python offers to easily compare lists.
+
+They are one of the main sources of joy in this world and they should be used by everyone all the time.
+
+```{python, echo=TRUE}
+animals = ["cat", "dog", "seal", "dolphin", "snake"]
+more_animals = ["cat", "seal", "crocodile"]
+dictio_animals  = {"dog": "mammal", "snake": "reptile", "cat" : "mammal", "seal": "mammal","dolphin": "mammal", "crocodile": "reptile"}
+
+[x for x in animals if "e" in x]
+
+[x for x in animals if "e" in x and x in more_animals]
+
+[x for x in animals if len(x) > 3]
+mammals = [x for x in animals if dictio_animals[x] == "mammal"]
+
+```
+
+# Exercise: translating mRNAs using non-standard genetic code
+
+## Setup
+
+In the **exercise** folder you will find a fasta file containing one mRNA from the human mitochondria, not using the standard genetic code, but the vertebrate mitochondrial one, specified in a dictionary in the following code.
+
+## What to do
+
+Knowing that the coding sequence starts at the 9th base, complete the following code to:
+
+-   import the sequence
+
+-   identify the sequence containing coding information
+
+-   convert it to a list of codons (3 bases each)
+
+-   use a "for" loop to convert the codons to aminoacids
+
+-   use "if" to check if a codon is a stop codon. If this is the case, use "break" to stop the "for" loop.
+
+## Code
+
+You can visualize this presentation as a document with file "3B_Python_Seminar_document.html"
+
+```{python, echo=TRUE, eval=FALSE}
+#Import sequnce fro file
+with open("exercise/sequence.fasta") as file:
+    lines = file.readlines()
+sequence = lines[-1]
+
+#State genetic code
+GenCode = {'TCA': 'S', 'TCC': 'S', 'TCG': 'S', 'TCT': 'S', 'TTC': 'F', 'TTT': 'F', 'TTA': 'L', 'TTG': 'L', 'TAC': 'Y', 'TAT': 'Y', 'TAA': '*', 'TAG': '*', 'TGC': 'C', 'TGT': 'C', 'TGA': 'W', 'TGG': 'W', 'CTA': 'L', 'CTC': 'L', 'CTG': 'L', 'CTT': 'L', 'CCA': 'P', 'CCC': 'P', 'CCG': 'P', 'CCT': 'P', 'CAC': 'H', 'CAT': 'H', 'CAA': 'Q', 'CAG': 'Q', 'CGA': 'R', 'CGC': 'R', 'CGG': 'R', 'CGT': 'R', 'ATA': 'M', 'ATC': 'I', 'ATT': 'I', 'ATG': 'M', 'ACA': 'T', 'ACC': 'T', 'ACG': 'T', 'ACT': 'T', 'AAC': 'N', 'AAT': 'N', 'AAA': 'K', 'AAG': 'K', 'AGC': 'S', 'AGT': 'S', 'AGA': '*', 'AGG': '*', 'GTA': 'V', 'GTC': 'V', 'GTG': 'V', 'GTT': 'V', 'GCA': 'A', 'GCC': 'A', 'GCG': 'A', 'GCT': 'A', 'GAC': 'D', 'GAT': 'D', 'GAA': 'E', 'GAG': 'E', 'GGA': 'G', 'GGC': 'G', 'GGG': 'G', 'GGT': 'G' }
+
+
+#Extract correct subsequence
+sequence = sequence[?]
+
+#Divide sequence in codons
+codons = [sequence[x:x+3] for x in range(0, len(sequence), 3)]
+
+#Extract protein sequence
+
+```
+
+## Interesting modules to look at:
+
+-   pandas (or more recently polars) are good modules for data mining, similar to R dplyr.
+
+-   scikit-learn is a user friendlish module for machine learning.
+
+-   biopython is an exceptional module to deal with biological data formats (fasta sequences, blast outputs, and more).
