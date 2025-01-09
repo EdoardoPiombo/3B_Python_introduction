@@ -10,6 +10,20 @@ use_condaenv("biopandas", required = TRUE)
 
 ```
 
+## Use python through Rstudio
+
+You can use Python in R by installing the "reticulate" R module.
+
+Just access Rstudio and do:
+
+Tools --\> Install Packages --\> reticulate.
+
+After that, do:
+
+File --\> New File --\> Python script
+
+And any command will automatically be executed in Python.
+
 ## When to use python
 
 I find myself using python in 4 cases:
